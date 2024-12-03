@@ -1,0 +1,18 @@
+FROM langgenius/dify-sandbox:0.2.10
+
+# The DifySandbox configurations
+# Make sure you are changing this key for your deployment with a strong key.
+# You can generate a strong key using `openssl rand -base64 42`.
+ENV API_KEY=${SANDBOX_API_KEY:-dify-sandbox}
+ENV GIN_MODE=${SANDBOX_GIN_MODE:-release}
+ENV WORKER_TIMEOUT=${SANDBOX_WORKER_TIMEOUT:-15}
+ENV ENABLE_NETWORK=${SANDBOX_ENABLE_NETWORK:-true}
+ENV HTTP_PROXY=${SANDBOX_HTTP_PROXY:-http://ssrf_proxy:3128}
+ENV HTTPS_PROXY=${SANDBOX_HTTPS_PROXY:-http://ssrf_proxy:3128}
+ENV SANDBOX_PORT=${SANDBOX_PORT:-8194}
+
+# copy files
+COPY ./docker/volumes/sandbox/dependencies /dependencies
+
+# Sintaxe básica
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 CMD curl -f http://localhost:8194/health || exit 1
