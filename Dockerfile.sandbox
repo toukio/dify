@@ -14,5 +14,9 @@ ENV SANDBOX_PORT=${SANDBOX_PORT:-8194}
 # copy files
 COPY ./docker/volumes/sandbox/dependencies /dependencies
 
+VOLUME /dependencies
+
+EXPOSE 8194
+
 # Sintaxe básica
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 CMD curl -f http://localhost:8194/health || exit 1

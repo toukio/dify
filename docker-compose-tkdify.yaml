@@ -63,6 +63,8 @@ services:
   sandbox:
     image: aristofanio/tk_ai_kit_dify_sandbox:latest
     restart: always
+    volumes:
+      - dify-api-sandbox-dependencies:/dependencies
     environment:
       # The DifySandbox configurations
       # Make sure you are changing this key for your deployment with a strong key.
@@ -99,10 +101,9 @@ services:
   # The Weaviate vector store.
   weaviate:
     image: aristofanio/tk_ai_kit_dify_weaviate:latest
-    profiles:
-      - ''
-      - weaviate
     restart: always
+    volumes:
+      - dify-api-weaviate:/var/lib/weaviate
     environment:
       # The Weaviate configurations
       # You can refer to the [Weaviate](https://weaviate.io/developers/weaviate/config-refs/env-vars) documentation for more information.

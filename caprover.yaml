@@ -20,6 +20,8 @@ services:
       WEAVIATE_ENDPOINT: http://srv-captain--$$cap_appname-weaviate:8080
     volumes:
       - dify-api-worker-storage:/app/api/storage
+    depends_on:
+      - $$cap_appname-weaviate
     caproverExtra:
       notExposeAsWebApp: 'true'
 
@@ -42,6 +44,8 @@ services:
       WEAVIATE_ENDPOINT: http://srv-captain--$$cap_appname-weaviate:8080
     volumes:
       - dify-api-worker-storage:/app/api/storage
+    depends_on:
+      - $$cap_appname-weaviate
     caproverExtra:
       notExposeAsWebApp: 'true'
 
@@ -51,10 +55,10 @@ services:
     restart: always
     environment:
       DEPLOY_ENV: PRODUCTION
-      APP_API_URL: //$$cap_appname.$$cap_dify-domain
-      CONSOLE_WEB_URL: //$$cap_appname.$$cap_dify-domain
-      CONSOLE_API_URL: //$$cap_appname.$$cap_dify-domain
-      SERVICE_API_URL: //$$cap_appname.$$cap_dify-domain
+      APP_API_URL: https://$$cap_appname.$$cap_dify-domain
+      CONSOLE_WEB_URL: https://$$cap_appname.$$cap_dify-domain
+      CONSOLE_API_URL: https://$$cap_appname.$$cap_dify-domain
+      SERVICE_API_URL: https://$$cap_appname.$$cap_dify-domain
       SENTRY_DSN: ''
       NEXT_TELEMETRY_DISABLED: '0'
       TEXT_GENERATION_TIMEOUT_MS: 60000
@@ -66,6 +70,8 @@ services:
   $$cap_appname-sandbox:
     image: aristofanio/tk_ai_kit_dify_sandbox:latest
     restart: always
+    volumes:
+      - dify-api-sandbox-dependencies:/dependencies
     environment:
       # The DifySandbox configurations
       # Make sure you are changing this key for your deployment with a strong key.
@@ -93,11 +99,17 @@ services:
       REVERSE_PROXY_PORT: 8194
       SANDBOX_HOST: srv-captain--$$cap_appname-sandbox
       SANDBOX_PORT: 8194
+    depends_on:
+      - $$cap_appname-sandbox
+    caproverExtra:
+      notExposeAsWebApp: 'true'
 
   # The Weaviate vector store.
   $$cap_appname-weaviate:
     image: aristofanio/tk_ai_kit_dify_weaviate:latest
     restart: always
+    volumes:
+      - dify-api-weaviate:/var/lib/weaviate
     environment:
       # The Weaviate configurations
       # You can refer to the [Weaviate](https://weaviate.io/developers/weaviate/config-refs/env-vars) documentation for more information.
@@ -111,6 +123,8 @@ services:
       AUTHENTICATION_APIKEY_USERS: hello@dify.ai
       AUTHORIZATION_ADMINLIST_ENABLED: true
       AUTHORIZATION_ADMINLIST_USERS: hello@dify.ai
+    caproverExtra:
+      notExposeAsWebApp: 'true'
 
   # The nginx reverse proxy.
   # used for reverse proxying the API service and Web service.
@@ -133,8 +147,8 @@ services:
     ports:
       - '80:80'
     depends_on:
-      - api
-      - web
+      - $$cap_appname-api
+      - $$cap_appname-web
 caproverOneClickApp:
   variables:
     - id: $$cap_dify-domain

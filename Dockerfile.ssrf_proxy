@@ -13,5 +13,6 @@ ENV SANDBOX_PORT=${SANDBOX_PORT:-8194}
 COPY ./docker/ssrf_proxy/squid.conf.template /etc/squid/squid.conf.template
 COPY ./docker/ssrf_proxy/docker-entrypoint.sh /docker-entrypoint-mount.sh
 
+EXPOSE 3128
 
 ENTRYPOINT ["sh", "-c", "cp /docker-entrypoint-mount.sh /docker-entrypoint.sh && sed -i 's/\r$$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh && /docker-entrypoint.sh"]

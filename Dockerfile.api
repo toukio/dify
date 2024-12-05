@@ -1,4 +1,4 @@
-FROM langgenius/dify-api:0.12.1
+FROM langgenius/dify-api:0.13.1
 
 # Use the shared environment variables.
 ENV WORKFLOW_FILE_UPLOAD_LIMIT=${WORKFLOW_FILE_UPLOAD_LIMIT:-10}
@@ -292,10 +292,28 @@ ENV CREATE_TIDB_SERVICE_JOB_ENABLED=${CREATE_TIDB_SERVICE_JOB_ENABLED:-false}
 ENV RETRIEVAL_TOP_N=${RETRIEVAL_TOP_N:-0}
 # Startup mode, 'worker' starts the Celery worker for processing the queue.
 ENV MODE=api
+ENV LOG_LEVEL=INFO
+ENV DEPLOY_ENV=PRODUCTION
+ENV MIGRATION_ENABLED=false
+ENV SERVER_WORKER_AMOUNT=
+ENV SERVER_WORKER_CLASS=
 ENV DB_HOST=host.docker.internal
 ENV REDIS_HOST=host.docker.internal
-ENV CELERY_BROKER_URL=redis://host.docker.internal:6379/1
-ENV WEAVIATE_ENDPOINT=http://host.docker.internal:8080
+ENV CELERY_WORKER_CLASS=gevent
+ENV CELERY_WORKER_AMOUNT=1
+ENV CELERY_BROKER_URL=redis://redis:6379/1
+ENV WEAVIATE_ENDPOINT=http://weaviate:8080
+ENV APP_WEB_URL=http://localhost
+ENV CONSOLE_API_URL=http://localhost
+ENV CONSOLE_WEB_URL=http://localhost
+ENV SERVICE_API_URL=http://localhost
+ENV SSRF_PROXY_HTTP_URL=http://ssrf-proxy:3128
+ENV SSRF_PROXY_HTTPS_URL=http://ssrf-proxy:3128
+ENV SSRF_DEFAULT_MAX_RETRIES=3
+ENV SSRF_DEFAULT_TIME_OUT=15
+ENV SSRF_DEFAULT_CONNECT_TIME_OUT=5
+ENV SSRF_DEFAULT_READ_TIME_OUT=5
+ENV SSRF_DEFAULT_WRITE_TIME_OUT=5
 
 # Copy the storage directory to the container, for storing user files.
 COPY ./docker/volumes/app/storage /app/api/storage

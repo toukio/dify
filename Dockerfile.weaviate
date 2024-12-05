@@ -17,3 +17,5 @@ COPY ./docker/volumes/weaviate /var/lib/weaviate
 
 # volume
 VOLUME /var/lib/weaviate
+
+EXPOSE 8080
