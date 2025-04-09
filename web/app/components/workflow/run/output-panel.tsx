@@ -23,7 +23,14 @@ const OutputPanel: FC<OutputPanelProps> = ({
   height,
 }) => {
   const isTextOutput = useMemo(() => {
-    return outputs && Object.keys(outputs).length === 1 && typeof outputs[Object.keys(outputs)[0]] === 'string'
+    if (!outputs || typeof outputs !== 'object')
+      return false
+    const keys = Object.keys(outputs)
+    const value = outputs[keys[0]]
+    return keys.length === 1 && (
+      typeof value === 'string'
+      || (Array.isArray(value) && value.every(item => typeof item === 'string'))
+    )
   }, [outputs])
 
   const fileList = useMemo(() => {
@@ -35,21 +42,21 @@ const OutputPanel: FC<OutputPanelProps> = ({
     for (const key in outputs) {
       if (Array.isArray(outputs[key])) {
         outputs[key].map((output: any) => {
-          if (output.dify_model_identity === '__dify__file__')
+          if (output?.dify_model_identity === '__dify__file__')
             fileList.push(output)
           return null
         })
       }
-      else if (outputs[key].dify_model_identity === '__dify__file__') {
+      else if (outputs[key]?.dify_model_identity === '__dify__file__') {
         fileList.push(outputs[key])
       }
     }
     return getProcessedFilesFromResponse(fileList)
   }, [outputs])
   return (
-    <div className='py-2'>
+    <div className='p-2'>
       {isRunning && (
-        <div className='pt-4 pl-[26px]'>
+        <div className='pl-[26px] pt-4'>
           <LoadingAnim type='text' />
         </div>
       )}
@@ -65,7 +72,13 @@ const OutputPanel: FC<OutputPanelProps> = ({
       )}
       {isTextOutput && (
         <div className='px-4 py-2'>
-          <Markdown content={outputs[Object.keys(outputs)[0]] || ''} />
+          <Markdown
+            content={
+              Array.isArray(outputs[Object.keys(outputs)[0]])
+                ? outputs[Object.keys(outputs)[0]].join('\n')
+                : (outputs[Object.keys(outputs)[0]] || '')
+            }
+          />
         </div>
       )}
       {fileList.length > 0 && (
@@ -78,14 +91,14 @@ const OutputPanel: FC<OutputPanelProps> = ({
           />
         </div>
       )}
-      {outputs && Object.keys(outputs).length > 1 && height! > 0 && (
+      {!isTextOutput && outputs && Object.keys(outputs).length > 0 && height! > 0 && (
         <div className='flex flex-col gap-2'>
           <CodeEditor
             showFileList
             readOnly
-            title={<div></div>}
+            title={<div tabIndex={0}>Output</div>}
             language={CodeLanguage.json}
-            value={outputs}
+            value={JSON.stringify(outputs, null, 2)}
             isJSONStringifyBeauty
             height={height ? (height - 16) / 2 : undefined}
           />
