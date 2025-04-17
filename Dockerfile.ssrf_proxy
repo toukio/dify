@@ -1,5 +1,5 @@
 # depend sandbox
-FROM ubuntu/squid:latest
+FROM ubuntu/squid:4.10-20.04_edge
 
 # env vars
 ENV HTTP_PORT=${SSRF_HTTP_PORT:-3128}

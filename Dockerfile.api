@@ -1,4 +1,4 @@
-FROM langgenius/dify-api:0.13.1
+FROM langgenius/dify-api:0.15.5
 
 # Use the shared environment variables.
 ENV WORKFLOW_FILE_UPLOAD_LIMIT=${WORKFLOW_FILE_UPLOAD_LIMIT:-10}
